@@ -8,5 +8,8 @@ init:
 hugo:
 	@docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) $(args)
 
+clean:
+	@cd .blog && sh ./clean.sh
+
 server:
 	@docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) server -D --bind=0.0.0.0
