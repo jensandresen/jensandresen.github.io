@@ -1,0 +1,17 @@
+baseURL: https://www.jensandresen.com
+languageCode: en-us
+title: Blog by Jens Andresen
+theme: tale
+author:
+  name: Jens Andresen
+params:
+  author: Jens Andresen
+menu:
+  main:
+    - identifier: blog
+      name: Blog
+      url: /blog/
+    - identifier: contact
+      name: Contact
+      url: /contact/
+paginate: 50

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blog by Jens Andresen</title>
+    <link>https://www.jensandresen.com/</link>
+    <description>Recent content on Blog by Jens Andresen</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Apr 2020 19:02:21 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.jensandresen.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Tactical Domain-Driven Design - a how to guide</title>
+      <link>https://www.jensandresen.com/posts/my-first-post/</link>
+      <pubDate>Sun, 26 Apr 2020 19:02:21 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/posts/my-first-post/</guid>
+      <description>This is the first post in a series about how to implement the tactical elements of Domain-Drive Design. There will be examples written i C# but they can easily be translated to other languages.
+Background I just want to tell about my motivation behind writing this series. I&amp;rsquo;m sure at this time that you are reading this, you will be able to find many other articles (and/or series) about the same topic - and I&amp;rsquo;m sure that they are all super great!</description>
+    </item>
+    
+  </channel>
+</rss>
