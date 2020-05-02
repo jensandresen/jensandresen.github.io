@@ -10,14 +10,19 @@ init:
 hugo:
 	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) $(args)
 
-clean:
-	@cd .blog && sh ./clean.sh
-
 server:
 	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) server -D --bind=0.0.0.0
 
-publish:
-	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) --cleanDestinationDir && cp -r $(PUBLISHED_CONTENT) $(WWWROOT)
+clean:
+	@cd .blog && chmod +x clean.sh && sh ./clean.sh
+
+prepare-content:
+	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) --cleanDestinationDir
+
+copy-content:
+	@cp -r $(PUBLISHED_CONTENT) $(WWWROOT)
+
+publish: clean prepare-content copy-content
 
 preview:
 	@docker run --rm -p 1313:80 -v "$(WWWROOT)":/usr/share/nginx/html:ro nginx
