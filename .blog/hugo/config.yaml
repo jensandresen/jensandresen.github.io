@@ -1,6 +1,6 @@
 baseURL: https://www.jensandresen.com
 languageCode: en-us
-title: Blog by Jens Andresen
+title: Comments on Software Development
 theme: tale
 author:
   name: Jens Andresen
@@ -11,7 +11,7 @@ menu:
     - identifier: blog
       name: Blog
       url: /blog/
-    - identifier: contact
-      name: Contact
-      url: /contact/
+    # - identifier: contact
+    #   name: Contact
+    #   url: /contact/
 paginate: 50

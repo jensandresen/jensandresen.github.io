@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Blogs on Comments on Software Development</title>
+    <link>https://www.jensandresen.com/blog/</link>
+    <description>Recent content in Blogs on Comments on Software Development</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.jensandresen.com/blog/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hi there!</title>
+      <link>https://www.jensandresen.com/blog/hi-there/</link>
+      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/blog/hi-there/</guid>
+      <description>This is the hello world type of post on this blog - it seemed kinda appropriate to do that since it&amp;rsquo;s going to be mostly about software development.
+My blog is now revamped and live - and I hereby bid you welcome!</description>
+    </item>
+    
+  </channel>
+</rss>
