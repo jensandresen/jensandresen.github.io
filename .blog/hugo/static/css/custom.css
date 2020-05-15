@@ -1,0 +1,12 @@
+.highlight {
+  padding: 0;
+}
+
+.highlight pre {
+  padding: 1rem;
+}
+
+blockquote {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}

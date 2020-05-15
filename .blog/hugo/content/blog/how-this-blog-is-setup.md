@@ -34,4 +34,153 @@ So I wanted to setup a repository on GitHub and point my domain [jensandresen.co
 
 ## Step 2 - set up Hugo
 
-So I've decided to go with Hugo but I didn't want to install it on my system. Instead I wanted it to run inside a `Docker` container 
+So I've decided to go with Hugo but I didn't want to install it on my system. Instead I wanted it to run inside a `Docker` container, so I have the option to build the site anywhere and more importantly version control my environment setup. There was a couple of pre-made container images on docker hub, but I decided to write my own:
+
+```dockerfile
+FROM alpine
+
+RUN apk add curl
+RUN apk add tar
+
+WORKDIR /usr/local/bin
+RUN curl -o dl-hugo.tar.gz -L https://github.com/gohugoio/hugo/releases/download/v0.69.2/hugo_0.69.2_Linux-64bit.tar.gz
+
+RUN tar -xvzf ./dl-hugo.tar.gz
+
+WORKDIR /blog
+
+EXPOSE 1313
+
+ENTRYPOINT [ "hugo" ]
+```
+
+You can see that I create a `/blog` folder and I intend to mound the contents of a folder on my host machine into that folder and run Hugo on it. First, though, I have to build the continer image:
+
+```shell
+$ docker build -t blog-builder .
+```
+
+I should now have a container image called `blog-builder` that I can run from the command line with:
+
+```shell
+$ docker run -it blog-builder
+```
+
+
+
+## Step 3 - repository file and folder structure
+
+So since I've choosen GitHub as my hosting it brings with a small caveat. When you host a website on your personal account, it can **only serve content from the root of your repository**. I have a small issue though - I also have to have all the Hugo files and my Dockerfile somewhere in the repository as well. I decided to kind of hide that away in a _hidden_ `./.blog` folder in the root of the repository. Within that folder I then created another folder `./.blog/hugo` that would contain all the files and folders that comes out of using Hugo to initialize a website. 
+
+So my repository structure would look like the following at this point:
+
+```
+.
+├── .blog
+│   ├── hugo
+│   │   ├── archetypes
+│   │   ├── content
+│   │   ├── static
+│   │   ├── themes
+│   │   └── config.yaml
+│   └── Dockerfile
+├── .git
+│   ├── (omitted)
+│   └── ...
+├── .gitignore
+└── index.htm (<-- from the hello world step)
+```
+
+
+
+## Step 4 - a small script to kick everything off
+
+Now I said before that I like working on the command line and I'm a big fan of good old `Make` and `Makefile`s, so I would put together a `Makefile` that I could run from the root of the repository. Please note that I'm using `Make` more as a task runner than what it was originally intended to be used for - but for this, it's convenient and _it will get the job done_.
+
+Here is the final result of the makefile:
+
+```makefile
+TAG=blog-builder
+CONTENT=${PWD}/.blog/hugo
+PUBLISHED_CONTENT=$(CONTENT)/public/
+PORT=1313
+WWWROOT=${PWD}
+
+init:
+	@cd .blog && docker build -t $(TAG) .
+
+hugo:
+	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) $(args)
+
+server:
+	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) server -D --bind=0.0.0.0
+
+clean:
+	@cd .blog && chmod +x clean.sh && sh ./clean.sh
+
+prepare-content:
+	@cd .blog && docker run -it --rm -p 1313:1313 -v "$(CONTENT)":/blog $(TAG) --cleanDestinationDir
+
+copy-content:
+	@cp -r $(PUBLISHED_CONTENT) $(WWWROOT)
+
+publish: clean prepare-content copy-content
+
+preview:
+	@docker run --rm -p 1313:80 -v "$(WWWROOT)":/usr/share/nginx/html:ro nginx
+
+```
+
+As you can tell from the above I've added a clean up target and a clean up script to go along with it. I felt that this was needed because I have to copy all the published content from Hugo into the root of the repository, so GitHub can serve it as a website.
+
+The clean up script could be many things, but I ended up with:
+
+```shell
+#! /usr/bin/env bash
+
+cd ..
+
+shopt -s extglob
+rm -Rfv !("makefile"|".git"|".blog"|".gitignore") 2> /dev/null
+shopt -u extglob
+
+cd ./.blog
+```
+
+It will just remove all files and folders from the root except those that we need to rebuild the entire site again.
+
+You can also spot in the `Makefile` that I've included a `preview` target that will spin up an `nginx` server that serves the content in the root of the repository. This way I should be able to inspect the _final_ version of the site before I push the commit to GitHub (and make the changes live).
+
+
+
+## Step 5 - custom domain
+
+So in my case a actully want my own domain name [https://www.jensandresen.com](https://www.jensandresen.com) to serve the content. To do that you _only_ have to do one more step.
+
+First off you need your own domain and when you've bought that you need to configure a couple of `a records`.
+
+> _"An **A record** maps a domain name to the IP address (Version 4) of the computer hosting the domain."_
+
+[For more information on `a records`](https://support.dnsimple.com/articles/a-record/) 
+
+
+
+You also need to setup a `CNAME record`.
+
+> _"**CNAME records** can be used to alias one name to another."_
+
+[For more information on CNAME records](https://support.dnsimple.com/articles/cname-record/)
+
+
+
+I've bought my domain through [namecheap](https://www.namecheap.com) so under **Advanced DNS** configurations for my domain, I've added these records:
+
+![Namecheap advanced dns](/img/namecheap_advanced_dns_setup.png)
+
+
+
+
+
+## Summary
+
+So with just a few simple scripts, Docker, Make and Hugo it's fairly simple to setup a static website on a personal GitHub account.
