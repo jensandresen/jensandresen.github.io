@@ -6,6 +6,9 @@ author:
   name: Jens Andresen
 params:
   author: Jens Andresen
+  css:
+    - "css/custom.css"
+    - "css/dracula.css"
 menu:
   main:
     - identifier: blog
@@ -15,3 +18,4 @@ menu:
     #   name: Contact
     #   url: /contact/
 paginate: 50
+googleAnalytics: UA-62446547-1

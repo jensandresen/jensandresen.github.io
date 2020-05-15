@@ -1,4 +1,7 @@
 <head>
+		{{- if not .Site.IsServer }}
+			{{ template "_internal/google_analytics.html" . }}
+		{{- end }}
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		{{- if .IsHome }}
@@ -14,7 +17,7 @@
 		{{- $cssTarget		:= "css/style.css" }}
 		{{- $cssOptions		:= cond ($inServerMode) (dict "targetPath" $cssTarget "enableSourceMap" true) (dict "targetPath" $cssTarget "outputStyle" "compressed") }}
 		{{- $style			:= resources.Get "scss/tale.scss" | toCSS $cssOptions }}
-  		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
+		<link rel="stylesheet" href="{{ $style.RelPermalink }}">
 		<link rel="stylesheet" href="{{ "css/fonts.css" | relURL }}">
 		{{ range .Site.Params.css -}}
 			<link rel="stylesheet" href="{{ . | relURL }}">
