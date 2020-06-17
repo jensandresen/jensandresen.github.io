@@ -1,7 +1,6 @@
 ---
 title: "Generating a static website with Hugo and hosting it on GitHub"
 date: 2020-06-17
-draft: true
 tags: ["blogging", "hugo", "github"]
 description: "Let's take a look at the steps I went through when setting up my blog. It's statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I'm using Docker to describe my build environment so it's easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository."
 summary: "Let's take a look at the steps I went through when setting up my blog. It's statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I'm using Docker to describe my build environment so it's easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository."

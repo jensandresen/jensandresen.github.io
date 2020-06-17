@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+	<meta property="og:title" content="Generating a static website with Hugo and hosting it on GitHub" />
+<meta property="og:description" content="Let&#39;s take a look at the steps I went through when setting up my blog. It&#39;s statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I&#39;m using Docker to describe my build environment so it&#39;s easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.jensandresen.com/blog/generating-a-static-website-with-hugo-and-hosting-it-on-github/" />
+<meta property="og:image" content="https://raw.githubusercontent.com/gohugoio/hugoDocs/master/static/img/hugo-logo.png" />
+<meta property="og:image" content="https://github.githubassets.com/images/modules/logos_page/GitHub-Logo.png" />
+<meta property="article:published_time" content="2020-06-17T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-17T00:00:00+00:00" />
+
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62446547-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Let&#39;s take a look at the steps I went through when setting up my blog. It&#39;s statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I&#39;m using Docker to describe my build environment so it&#39;s easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository.">
+
+	<title>Generating a static website with Hugo and hosting it on GitHub &middot; Comments on Software Development</title>
+
+	
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/fonts.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/dracula.css">
+	
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+	
+	<link href="" rel="alternate"
+		type="application/rss+xml" title="Comments on Software Development" />
+</head>
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Comments on Software Development</h2>
+				</a>
+				<ul>
+    
+    
+        <li>
+            <a href="/blog/">
+                
+                <span>Blog</span>
+                
+            </a>
+        </li>
+    
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Jens Andresen
+        <br>
+        <span>on&nbsp;</span><time datetime="2020-06-17 00:00:00 &#43;0000 UTC">June 17, 2020</time>
+</div>
+		<h1 class="post-title">Generating a static website with Hugo and hosting it on GitHub</h1>
+<div class="post-line"></div>
+
+		
+
+		<p>I thought that the first real post on this blog could be about how the blog is actually set up. So let&rsquo;s have a peak under the hood.</p>
+<h2 id="background">Background</h2>
+<p>I&rsquo;m a fairly technical person and I&rsquo;m pretty comfortable with the command line, git and writing markdown, so I wanted to go with an option that could support these. I have worked with a couple of CMS based solutions before and they are all really great (e.g. wordpress and the likes) and you can get up and running with just a couple of clicks. But I really like to version my work with git and writing markdown feels pretty simple, straight forward and a great fit for the blogging format - and I can bring my own editor!</p>
+<h2 id="simple-choices">Simple choices</h2>
+<p>I&rsquo;ve choosen the static site generator <a href="https://gohugo.io">Hugo</a> for turning my markdown posts into html. I have no need - or a very modest need - for dynamics on the final website/blog, so this will do just fine. Once a blog post is written and published it is most likely never changed - so a static website is a great fit.</p>
+<p>By going with a static website an easy choice for hosting is <a href="https://www.github.com">GitHub</a> - this would by the way be a <em>two birds with one stone</em> kind of choice because this would enable me to create a git repository to version control all the posts (and additional content) - perfect!</p>
+<p>So now I have the basics in place - let&rsquo;s make it happen.</p>
+<h2 id="step-1---hello-world">Step 1 - hello world</h2>
+<p>So I wanted to setup a repository on GitHub and point my domain <a href="https://www.jensandresen.com">jensandresen.com</a> to it. To do this I created a GitHub repository named according to their convention for hosting personal websites - in my case it was <code>jensandresen.github.io</code> which basically is <code>[your-username].github.io</code>. This enables you to browse the contents of the repository as a website and by visiting <a href="http://jensandresen.github.io">http://jensandresen.github.io</a> in your browser. To verify that everything is working so far, I created a basic <code>index.htm</code>page in the root of the repository and pushed the commit to GitHub. After a couple of seconds (or maybe a minute) I was able to browse that page with my browser. Okay, it&rsquo;s verified - it works!</p>
+<h2 id="step-2---set-up-hugo">Step 2 - set up Hugo</h2>
+<p>So I&rsquo;ve decided to go with Hugo but I didn&rsquo;t want to install it on my system. Instead I wanted it to run inside a <code>Docker</code> container, so I have the option to build the site anywhere and more importantly version control my environment setup. There was a couple of pre-made container images on docker hub, but I decided to write my own:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-dockerfile" data-lang="dockerfile"><span style="color:#66d9ef">FROM</span><span style="color:#e6db74"> alpine</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk add curl<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> apk add tar<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /usr/local/bin</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> curl -o dl-hugo.tar.gz -L https://github.com/gohugoio/hugo/releases/download/v0.69.2/hugo_0.69.2_Linux-64bit.tar.gz<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">RUN</span> tar -xvzf ./dl-hugo.tar.gz<span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">WORKDIR</span><span style="color:#e6db74"> /blog</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">EXPOSE</span><span style="color:#e6db74"> 1313</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010">
+</span><span style="color:#960050;background-color:#1e0010"></span><span style="color:#66d9ef">ENTRYPOINT</span> [ <span style="color:#e6db74">&#34;hugo&#34;</span> ]<span style="color:#960050;background-color:#1e0010">
+</span></code></pre></div><p>You can see that I create a <code>/blog</code> folder and I intend to mound the contents of a folder on my host machine into that folder and run Hugo on it. First, though, I have to build the continer image:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ docker build -t blog-builder .
+</code></pre></div><p>I should now have a container image called <code>blog-builder</code> that I can run from the command line with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ docker run -it blog-builder
+</code></pre></div><h2 id="step-3---repository-file-and-folder-structure">Step 3 - repository file and folder structure</h2>
+<p>So since I&rsquo;ve choosen GitHub as my hosting it brings with a small caveat. When you host a website on your personal account, it can <strong>only serve content from the root of your repository</strong>. I have a small issue though - I also have to have all the Hugo files and my Dockerfile somewhere in the repository as well. I decided to kind of hide that away in a <em>hidden</em> <code>./.blog</code> folder in the root of the repository. Within that folder I then created another folder <code>./.blog/hugo</code> that would contain all the files and folders that comes out of using Hugo to initialize a website.</p>
+<p>So my repository structure would look like the following at this point:</p>
+<pre><code>.
+├── .blog
+│   ├── hugo
+│   │   ├── archetypes
+│   │   ├── content
+│   │   ├── static
+│   │   ├── themes
+│   │   └── config.yaml
+│   └── Dockerfile
+├── .git
+│   ├── (omitted)
+│   └── ...
+├── .gitignore
+└── index.htm (&lt;-- from the hello world step)
+</code></pre><h2 id="step-4---a-small-script-to-kick-everything-off">Step 4 - a small script to kick everything off</h2>
+<p>Now I said before that I like working on the command line and I&rsquo;m a big fan of good old <code>Make</code> and <code>Makefile</code>s, so I would put together a <code>Makefile</code> that I could run from the root of the repository. Please note that I&rsquo;m using <code>Make</code> more as a task runner than what it was originally intended to be used for - but for this, it&rsquo;s convenient and <em>it will get the job done</em>.</p>
+<p>Here is the final result of the makefile:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-makefile" data-lang="makefile">TAG<span style="color:#f92672">=</span>blog-builder
+CONTENT<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>PWD<span style="color:#e6db74">}</span>/.blog/hugo
+PUBLISHED_CONTENT<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>CONTENT<span style="color:#66d9ef">)</span>/public/
+PORT<span style="color:#f92672">=</span><span style="color:#ae81ff">1313</span>
+WWWROOT<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>PWD<span style="color:#e6db74">}</span>
+
+<span style="color:#a6e22e">init</span><span style="color:#f92672">:</span>
+	@cd .blog <span style="color:#f92672">&amp;&amp;</span> docker build -t <span style="color:#66d9ef">$(</span>TAG<span style="color:#66d9ef">)</span> .
+
+<span style="color:#a6e22e">hugo</span><span style="color:#f92672">:</span>
+	@cd .blog <span style="color:#f92672">&amp;&amp;</span> docker run -it --rm -p 1313:1313 -v <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>CONTENT<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>:/blog <span style="color:#66d9ef">$(</span>TAG<span style="color:#66d9ef">)</span> <span style="color:#66d9ef">$(</span>args<span style="color:#66d9ef">)</span>
+
+<span style="color:#a6e22e">server</span><span style="color:#f92672">:</span>
+	@cd .blog <span style="color:#f92672">&amp;&amp;</span> docker run -it --rm -p 1313:1313 -v <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>CONTENT<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>:/blog <span style="color:#66d9ef">$(</span>TAG<span style="color:#66d9ef">)</span> server -D --bind<span style="color:#f92672">=</span>0.0.0.0
+
+<span style="color:#a6e22e">clean</span><span style="color:#f92672">:</span>
+	@cd .blog <span style="color:#f92672">&amp;&amp;</span> chmod +x clean.sh <span style="color:#f92672">&amp;&amp;</span> sh ./clean.sh
+
+<span style="color:#a6e22e">prepare-content</span><span style="color:#f92672">:</span>
+	@cd .blog <span style="color:#f92672">&amp;&amp;</span> docker run -it --rm -p 1313:1313 -v <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>CONTENT<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>:/blog <span style="color:#66d9ef">$(</span>TAG<span style="color:#66d9ef">)</span> --cleanDestinationDir
+
+<span style="color:#a6e22e">copy-content</span><span style="color:#f92672">:</span>
+	@cp -r <span style="color:#66d9ef">$(</span>PUBLISHED_CONTENT<span style="color:#66d9ef">)</span> <span style="color:#66d9ef">$(</span>WWWROOT<span style="color:#66d9ef">)</span>
+
+<span style="color:#a6e22e">publish</span><span style="color:#f92672">:</span> clean prepare-content copy-content
+
+<span style="color:#a6e22e">preview</span><span style="color:#f92672">:</span>
+	@docker run --rm -p 1313:80 -v <span style="color:#e6db74">&#34;</span><span style="color:#66d9ef">$(</span>WWWROOT<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>:/usr/share/nginx/html:ro nginx
+
+</code></pre></div><p>As you can tell from the above I&rsquo;ve added a clean up target and a clean up script to go along with it. I felt that this was needed because I have to copy all the published content from Hugo into the root of the repository, so GitHub can serve it as a website.</p>
+<p>The clean up script could be many things, but I ended up with:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e">#! /usr/bin/env bash
+</span><span style="color:#75715e"></span>
+cd ..
+
+shopt -s extglob
+rm -Rfv !<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;makefile&#34;</span>|<span style="color:#e6db74">&#34;.git&#34;</span>|<span style="color:#e6db74">&#34;.blog&#34;</span>|<span style="color:#e6db74">&#34;.gitignore&#34;</span><span style="color:#f92672">)</span> 2&gt; /dev/null
+shopt -u extglob
+
+cd ./.blog
+</code></pre></div><p>It will just remove all files and folders from the root except those that we need to rebuild the entire site again.</p>
+<p>You can also spot in the <code>Makefile</code> that I&rsquo;ve included a <code>preview</code> target that will spin up an <code>nginx</code> server that serves the content in the root of the repository. This way I should be able to inspect the <em>final</em> version of the site before I push the commit to GitHub (and make the changes live).</p>
+<h2 id="step-5---custom-domain">Step 5 - custom domain</h2>
+<p>So in my case a actully want my own domain name <a href="https://www.jensandresen.com">https://www.jensandresen.com</a> to serve the content. To do that you <em>only</em> have to do one more step.</p>
+<p>First off you need your own domain and when you&rsquo;ve bought that you need to configure a couple of <code>a records</code>.</p>
+<blockquote>
+<p><em>&ldquo;An <strong>A record</strong> maps a domain name to the IP address (Version 4) of the computer hosting the domain.&quot;</em></p>
+</blockquote>
+<p><a href="https://support.dnsimple.com/articles/a-record/">For more information on <code>a records</code></a></p>
+<p>You need to add <code>A records</code> to your <strong>DNS</strong> configuration for your domain to point your actual domain name to the servers where GitHub will host your website - like mentioned above it will map your domain name to the <em>IP address</em> of a GitHub server (we will add a couple of these mapping entries). For <em>copy-pasteable</em> reasons, these are the current IP addresses for GitHub pages servers:</p>
+<pre><code>185.199.108.153
+185.199.109.153
+185.199.110.153
+185.199.111.153
+</code></pre><p><em><strong>Please note:</strong> at the time of writing, these are the official IP addresses of the GitHub servers, but they are subject to change so please use the ones from GitHub&rsquo;s documentation (find a link for it further down).</em></p>
+<p>You also need to setup a <code>CNAME record</code>.</p>
+<blockquote>
+<p><em>&quot;<strong>CNAME records</strong> can be used to alias one name to another.&quot;</em></p>
+</blockquote>
+<p><a href="https://support.dnsimple.com/articles/cname-record/">For more information on CNAME records</a></p>
+<p>We do this to map (alias) my domain name to your GitHub pages url (in this case mine is jensandresen.github.io). This means that my domain name will be an alias for my GitHub pages url.</p>
+<p>So, I&rsquo;ve bought my domain through <a href="https://www.namecheap.com">namecheap</a> and under <strong>Advanced DNS</strong> configurations for my domain, I&rsquo;ve added these records:</p>
+<p><img src="/img/namecheap_advanced_dns_setup.png" alt="Namecheap advanced dns"></p>
+<p>Now I need to make a couple of minor changes to my repository on GitHub. First I need to enable &ldquo;GitHub Pages&rdquo; for the repository by going to the settings tab:</p>
+<p><img src="/img/github_repo_settings_highlight.png" alt="github repo settings highlight"></p>
+<p>&hellip;and scroll down to the &ldquo;GitHub Pages&rdquo; section and point it to my custom domain like this:</p>
+<p><img src="/img/github_repo_enable_pages.png" alt="github repo enable pages"></p>
+<p><em><strong>Remember</strong> to also enable HTTPS.</em></p>
+<p>The final thing to do with the repository is to include a <code>CNAME</code> file (a text file named <code>CNAME</code> <strong>without</strong> an extension) in the root of the repository that contains the alias like so:</p>
+<pre><code>www.jensandresen.com
+</code></pre><p>I&rsquo;ve added it as a static asset in Hugo so it will be included as part of the build process and located in the root of the repository when I run the build process.</p>
+<p>Thats about it!</p>
+<p>For more information about how to setup your GitHub pages, have a look at the article &ldquo;<a href="https://help.github.com/en/github/working-with-github-pages">working with GitHub pages</a>&rdquo; from GitHub.</p>
+<h2 id="summary">Summary</h2>
+<p>So with just a few simple scripts, Docker, Make and Hugo it&rsquo;s fairly simple to setup a static website build process and serve it from a personal GitHub account. It is not necessary to do it this way, but this is the way I&rsquo;ve choosen to do it - for now. To serve a static website from GitHub to just need to put the assets in the root of a repository and then enable GitHub Pages for that repository.</p>
+<p>Have fun with it!</p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/blog/hi-there/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2020-06-17 19:12:40.7807465 &#43;0000 UTC m=&#43;0.687806201">2020</time> Jens Andresen. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

@@ -6,10 +6,19 @@
     <description>Recent content in Blogs on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 03 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.jensandresen.com/blog/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Generating a static website with Hugo and hosting it on GitHub</title>
+      <link>https://www.jensandresen.com/blog/generating-a-static-website-with-hugo-and-hosting-it-on-github/</link>
+      <pubDate>Wed, 17 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/blog/generating-a-static-website-with-hugo-and-hosting-it-on-github/</guid>
+      <description>Let&amp;rsquo;s take a look at the steps I went through when setting up my blog. It&amp;rsquo;s statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I&amp;rsquo;m using Docker to describe my build environment so it&amp;rsquo;s easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository.</description>
+    </item>
     
     <item>
       <title>Hi there!</title>

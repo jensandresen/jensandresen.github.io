@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Comments on Software Development</title>
-    <link>https://www.jensandresen.com/</link>
-    <description>Recent content on Comments on Software Development</description>
+    <title>hugo on Comments on Software Development</title>
+    <link>https://www.jensandresen.com/tags/hugo/</link>
+    <description>Recent content in hugo on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://www.jensandresen.com/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.jensandresen.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,16 +18,6 @@
       
       <guid>https://www.jensandresen.com/blog/generating-a-static-website-with-hugo-and-hosting-it-on-github/</guid>
       <description>Let&amp;rsquo;s take a look at the steps I went through when setting up my blog. It&amp;rsquo;s statically generated with Hugo and served from GitHub Pages - and available though my own domain name. I&amp;rsquo;m using Docker to describe my build environment so it&amp;rsquo;s easy portable and no additional tooling has to be installed (other than Docker). We will also cover the steps for mapping a custom domain name to a GitHub Pages repository.</description>
-    </item>
-    
-    <item>
-      <title>Hi there!</title>
-      <link>https://www.jensandresen.com/blog/hi-there/</link>
-      <pubDate>Sun, 03 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.jensandresen.com/blog/hi-there/</guid>
-      <description>This is the hello world type of post on this blog - it seemed kinda appropriate to do that since it&amp;rsquo;s going to be mostly about software development.
-My blog is now revamped and live - and I hereby bid you welcome!</description>
     </item>
     
   </channel>
