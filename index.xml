@@ -6,10 +6,19 @@
     <description>Recent content on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jan 2025 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.jensandresen.com/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Implementing DDD Series: Modelling Business Primitives with Value Objects</title>
+      <link>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</guid>
+      <description>A look at Value Objects in Domain-Driven Design, including their implementation in C#, their purpose in extending the type system, and how they help protect business invariants while fostering a shared language between developers and domain experts.</description>
+    </item>
     
     <item>
       <title>Generating a static website with Hugo and hosting it on GitHub</title>

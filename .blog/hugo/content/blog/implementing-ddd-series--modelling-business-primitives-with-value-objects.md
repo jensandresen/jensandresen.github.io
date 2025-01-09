@@ -3,7 +3,7 @@ title: "Implementing DDD Series: Modelling Business Primitives with Value Object
 description: This article explores how to model and implement business primitives as Value Objects in .NET and C#. It discusses their role in Domain-Driven Design, how they differ from entities, and their impact on both technical design and team communication.
 summary: A look at Value Objects in Domain-Driven Design, including their implementation in C#, their purpose in extending the type system, and how they help protect business invariants while fostering a shared language between developers and domain experts.
 published: 2025-01-09
-draft: true
+draft: false
 tags: ["DDD", "Domain-Driven Design", ".NET", "C#"]
 categories: ["Development", "Design"]
 images: ["/img/building-blocks-1.jpg"]

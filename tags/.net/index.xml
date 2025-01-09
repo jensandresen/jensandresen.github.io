@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>.NET on Comments on Software Development</title>
+    <link>https://www.jensandresen.com/tags/.net/</link>
+    <description>Recent content in .NET on Comments on Software Development</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Jan 2025 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://www.jensandresen.com/tags/.net/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Implementing DDD Series: Modelling Business Primitives with Value Objects</title>
+      <link>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</guid>
+      <description>A look at Value Objects in Domain-Driven Design, including their implementation in C#, their purpose in extending the type system, and how they help protect business invariants while fostering a shared language between developers and domain experts.</description>
+    </item>
+    
+  </channel>
+</rss>

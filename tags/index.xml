@@ -6,10 +6,46 @@
     <description>Recent content in Tags on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 17 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 09 Jan 2025 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.jensandresen.com/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>.NET</title>
+      <link>https://www.jensandresen.com/tags/.net/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/tags/.net/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>C#</title>
+      <link>https://www.jensandresen.com/tags/c#/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/tags/c#/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>DDD</title>
+      <link>https://www.jensandresen.com/tags/ddd/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/tags/ddd/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Domain-Driven Design</title>
+      <link>https://www.jensandresen.com/tags/domain-driven-design/</link>
+      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/tags/domain-driven-design/</guid>
+      <description></description>
+    </item>
     
     <item>
       <title>blogging</title>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+	<meta property="og:title" content="Implementing DDD Series: Modelling Business Primitives with Value Objects" />
+<meta property="og:description" content="This article explores how to model and implement business primitives as Value Objects in .NET and C#. It discusses their role in Domain-Driven Design, how they differ from entities, and their impact on both technical design and team communication." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/" />
+<meta property="og:image" content="https://www.jensandresen.com/img/building-blocks-1.jpg" />
+<meta property="article:published_time" content="2025-01-09T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-01-09T00:00:00+00:00" />
+
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62446547-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="This article explores how to model and implement business primitives as Value Objects in .NET and C#. It discusses their role in Domain-Driven Design, how they differ from entities, and their impact on both technical design and team communication.">
+
+	<title>Implementing DDD Series: Modelling Business Primitives with Value Objects &middot; Comments on Software Development</title>
+
+	
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/fonts.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/dracula.css">
+	
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+	
+	<link href="" rel="alternate"
+		type="application/rss+xml" title="Comments on Software Development" />
+</head>
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Comments on Software Development</h2>
+				</a>
+				<ul>
+    
+    
+        <li>
+            <a href="/blog/">
+                
+                <span>Blog</span>
+                
+            </a>
+        </li>
+    
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Jens Andresen
+        <br>
+        <span>on&nbsp;</span><time datetime="2025-01-09 00:00:00 &#43;0000 UTC">January 9, 2025</time>
+</div>
+		<h1 class="post-title">Implementing DDD Series: Modelling Business Primitives with Value Objects</h1>
+<div class="post-line"></div>
+
+		
+
+		<p><img src="/img/building-blocks-1.jpg" alt="Building Blocks"></p>
+<p>Let&rsquo;s take a look at one of the fundamental <em>building blocks</em> of tactical <strong>Domain-Driven Design</strong>, namely <code>Value Objects</code>. Value objects are a highly useful way of implementing business information that is important within the domain your are modelling, and it gives you a place to encapsulate and protect the invariant(s) that make up that piece of business information. This is what often is referred to as <em>business primitives</em>.</p>
+<p>From the <strong>Domain-Driven Design</strong> inspired literature <code>Value Objects</code> are often described by how they are identified and compared and the semantics around that, and in contrast to <code>Entities</code> that carry their identity as a <strong>property</strong> of the entity itself, <code>Value Objects</code> are identified by the properties they carry. So - semantically - two <code>Value Objects</code> are considered identical if the value of their properties are equal, whereas <code>Entities</code> are considered identical if the value of their identity property is equal.</p>
+<p>To me <code>Value Objects</code> are more than just a way to represent a business value in source code. If that was the only purpose, you have plenty of language primitives already in most modern programming languages, and C# (which the following examples will be based on) is no exception to that. But you get a lot more when opting for a <code>Value Object</code>. Besides the usual encapsulation and protection of invariant(s), single and coherent place to put business rules and business opinions about that particular piece of business information, I&rsquo;ve also come to appreciate the communication aspect of implementing <code>Value Objects</code> in source code in a very explicit manner. This then signals to future developers having to maintain the codebase that this piece of information is important to the business and to the domain. So whenever I come across a C# class that somehow indicates that this is a <code>Value Object</code> it tells me that this is an important concept in the domain and it is worth remembering, and by reading the class and hopefully the unit tests supporting it I should get a good understanding about business rules - okay granted, it will just be a tiny fraction of the domain and the business, but it should equip me with a <em>&ldquo;context adapted vocabulary&rdquo;</em> that I can use to have valuable conversation with domain experts and to start building up a <strong>Ubiquitous Language</strong>. I find this communication aspect of it sooooo cool and really really useful! Just think of the implicit (and convention based) contract between developers working in the codebase where it signals that this class (read <em>information</em>) is important. It&rsquo;s subtle, but makes a huge difference!</p>
+<h2 id="lets-write-one">Let&rsquo;s write one</h2>
+<p>Okay, so with that in mind, let&rsquo;s look at some code. Now I&rsquo;ve used <code>Value Objects</code> for a long time, and I have experimented with different ways of implementing the same thing. I&rsquo;ve used language constructs from C# that might seem like a good fit (e.g. <code>struct</code>, <code>record</code> and just simple POCO&rsquo;s), and they all have their advantages like built-in semantical equality but there is always something that I have to do to it to make it behave in a way that proper encapsulates and protects the invariants the way I want it to. So I always gravitates towards the same implementation that has served me well over the years, and if you google &ldquo;Value Objects in C#&rdquo; you will find many many many articles describing the exact same approach. I can unfortunately not remember the origin of the approach that I tend to use, so I cannot give any credit here, but it seems that I&rsquo;m not the only one (<em>that can be both good AND bad</em>).</p>
+<p>The approach is based on having a base class that defines the equality logic, and then you create derivatives from that for your individual <code>Value Object</code> needs. Even though I&rsquo;m not a huge advocate for inheritance as I subscribe to <em>&ldquo;composition over inheritance&rdquo;</em>, this is actually one of the few exceptions that I use myself. In return I get the communication aspect that I mentioned before, so to me this is an acceptable trade-off - in fact, I can tell new developers to go and find all derivatives of the <code>Value Object</code> base class to start building up an understanding of the domain, and to adapt/extend their domain vocabulary. Now that&rsquo;s useful!</p>
+<h3 id="the-valueobject-base-class">The ValueObject base class</h3>
+<p>Here is the C# implementation of the <code>Value Object</code> base class:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ValueObject</span>
+{
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">abstract</span> IEnumerable&lt;<span style="color:#66d9ef">object</span>&gt; GetEqualityComponents();
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">string</span> ToString();
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">bool</span> Equals(<span style="color:#66d9ef">object?</span> obj)
+    {
+        <span style="color:#66d9ef">if</span> (obj <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">null</span>)
+        {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+        }
+
+        <span style="color:#66d9ef">if</span> (GetType() != obj.GetType())
+        {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+        }
+
+        <span style="color:#66d9ef">var</span> valueObject = (ValueObject)obj;
+
+        <span style="color:#66d9ef">return</span> GetEqualityComponents().SequenceEqual(valueObject.GetEqualityComponents());
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">int</span> GetHashCode()
+    {
+        <span style="color:#66d9ef">var</span> hash = <span style="color:#66d9ef">new</span> HashCode();
+
+        <span style="color:#66d9ef">foreach</span> (<span style="color:#66d9ef">var</span> component <span style="color:#66d9ef">in</span> GetEqualityComponents())
+        {
+            hash.Add(component);
+        }
+
+        <span style="color:#66d9ef">return</span> hash.ToHashCode();
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span> ==(ValueObject? a, ValueObject? b)
+    {
+        <span style="color:#66d9ef">if</span> (ReferenceEquals(a, b))
+        {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+        }
+
+        <span style="color:#66d9ef">if</span> (a <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">null</span> || b <span style="color:#66d9ef">is</span> <span style="color:#66d9ef">null</span>)
+        {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+        }
+
+        <span style="color:#66d9ef">return</span> a.Equals(b);
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> <span style="color:#66d9ef">operator</span> !=(ValueObject? a, ValueObject? b) =&gt; !(a == b);
+}
+</code></pre></div><p>As you can see it mostly contains the logic for comparing two instances, and choosing what to compare is handed over to derivatives that must implement the <code>GetEqualityComponents()</code> method and return the relevant information.</p>
+<p>Alright, let&rsquo;s see it in action!</p>
+<h3 id="example-a-productnumber-implementation">Example: a ProductNumber implementation</h3>
+<p>Let&rsquo;s say that we have a domain where <code>Products</code> are a core concept, and the business refers to products by a <strong>product number</strong> like <code>P0312</code>, which also means that product numbers are core concepts of the domain as it&rsquo;s part of the language shared with the business. I would tend to represent this as a <code>Value Object</code> (for all the reasons mentioned above), and I&rsquo;d write some parsing logic to ensure that the format of <code>Pxxxx</code> is respected throughout the application. Now, it doesn&rsquo;t sound like much and the following example is also not that complicated - but isn&rsquo;t that what we want?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductNumber</span> : ValueObject
+{
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">readonly</span> ProductNumber None = <span style="color:#66d9ef">new</span>(Prefix + <span style="color:#e6db74">&#34;00000&#34;</span>);
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">const</span> <span style="color:#66d9ef">string</span> Prefix = <span style="color:#e6db74">&#34;P&#34;</span>;
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">readonly</span> <span style="color:#66d9ef">string</span> _value;
+
+    <span style="color:#66d9ef">private</span> ProductNumber(<span style="color:#66d9ef">string</span> <span style="color:#66d9ef">value</span>)
+    {
+        _value = <span style="color:#66d9ef">value</span>;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">string</span> ToString() =&gt; _value;
+
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> IEnumerable&lt;<span style="color:#66d9ef">object</span>&gt; GetEqualityComponents()
+    {
+        <span style="color:#66d9ef">yield</span> <span style="color:#66d9ef">return</span> _value;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> ProductNumber Parse(<span style="color:#66d9ef">string?</span> text)
+    {
+        <span style="color:#66d9ef">if</span> (TryParse(text, <span style="color:#66d9ef">out</span> <span style="color:#66d9ef">var</span> productNumber))
+        {
+            <span style="color:#66d9ef">return</span> productNumber;
+        }
+
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> FormatException(<span style="color:#e6db74">$&#34;The value \&#34;</span>{text}<span style="color:#960050;background-color:#1e0010">\</span><span style="color:#e6db74">&#34; is not a valid product number&#34;</span>);
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">bool</span> TryParse(<span style="color:#66d9ef">string?</span> text, <span style="color:#66d9ef">out</span> ProductNumber productNumber)
+    {
+        <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">string</span>.IsNullOrWhiteSpace(text))
+        {
+            productNumber = <span style="color:#66d9ef">null</span>!;
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+        }
+
+        <span style="color:#66d9ef">if</span> (!Regex.IsMatch(text, <span style="color:#e6db74">$@&#34;^{Prefix}\d+$&#34;</span>, RegexOptions.IgnoreCase))
+        {
+            productNumber = <span style="color:#66d9ef">null</span>!;
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span>;
+        }
+
+        productNumber = <span style="color:#66d9ef">new</span> ProductNumber(text.ToUpperInvariant());
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+    }
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">implicit</span> <span style="color:#66d9ef">operator</span> ProductNumber(<span style="color:#66d9ef">string</span> <span style="color:#66d9ef">value</span>) =&gt; Parse(<span style="color:#66d9ef">value</span>);
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">implicit</span> <span style="color:#66d9ef">operator</span> <span style="color:#66d9ef">string</span>(ProductNumber productNumber) =&gt; productNumber._value;
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> ProductNumber FromUnique(<span style="color:#66d9ef">uint</span> uniqueValue)
+    {
+        <span style="color:#66d9ef">if</span> (uniqueValue &gt; <span style="color:#ae81ff">0</span>)
+        {
+            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ProductNumber(Prefix + uniqueValue.ToString(<span style="color:#e6db74">&#34;D5&#34;</span>));
+        }
+        
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> ArgumentOutOfRangeException(nameof(uniqueValue), uniqueValue, <span style="color:#e6db74">$&#34;The value {uniqueValue} is not acceptable for product number&#34;</span>);
+    }
+}
+</code></pre></div><h2 id="final-thoughts">Final thoughts</h2>
+<p>Now <code>Value Objects</code> seems like a small thing, but in my opinion they serve a big purpose as one of the building blocks when implementing principles and patterns from tacticle Domain-Driven Design. They serve a communication purpose between you and the next developer (might also be you in the future) that should set expectations about the purpose of the <code>Value Object</code> and why that piece of information is important, but it also extends beyond developers towards domain experts and should be part of the language that you use together to communicate; and to continuously discover the domain.</p>
+<p>From a more technical perspective, by explicitly expressing <strong>business primitives</strong> as <code>Value Objects</code> you essentially extend the type system of your programming language (e.g. C# in this case) with those <strong>business primitives</strong>. So instead of having your usual <code>string</code>, <code>int</code>, <code>bool</code>, <code>datetime</code> etc., you now have <code>ProductNumber</code> that you can pass around in your source code. By doing this you also get a lot of help from your compiler, and you get fast feedback already at compile time because you now have a <strong>business primitive</strong> on the same level as your <em>programming language primitives</em>.</p>
+<p>So in this blog post we looked at how to implement <code>Value Objects</code> in <code>C#</code>, but the concept can of course be used in any language. The approach of using a base class is just one of many different ways of going about it, and they all have certain traits to them that would make them attractive. I&rsquo;ve tried to convey those of the more communicative nature that I tend to value, and I have enjoyed using this approach for a long time now.</p>
+<p><em>Thank you for reading this post.</em></p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/blog/generating-a-static-website-with-hugo-and-hosting-it-on-github/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2025-01-09 14:40:28.378561 &#43;0000 UTC m=&#43;1.265207001">2025</time> Jens Andresen. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>
