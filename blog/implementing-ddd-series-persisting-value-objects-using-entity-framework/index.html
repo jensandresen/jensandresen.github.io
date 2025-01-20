@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+	<meta property="og:title" content="Implementing DDD Series: Persisting Value Objects using Entity Framework" />
+<meta property="og:description" content="This article explores how to persist Value Objects in .NET and C# using Entity Framework. It covers their role in Domain-Driven Design, the challenges of mapping them to relational databases, and how techniques like ValueConverter can help bridge the gap between the domain model and the persistence layer." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://www.jensandresen.com/blog/implementing-ddd-series-persisting-value-objects-using-entity-framework/" />
+<meta property="og:image" content="https://www.jensandresen.com/img/persisting-values-1.jpg" />
+<meta property="article:published_time" content="2025-01-20T00:00:00+00:00" />
+<meta property="article:modified_time" content="2025-01-20T00:00:00+00:00" />
+
+	
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+	ga('create', 'UA-62446547-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="This article explores how to persist Value Objects in .NET and C# using Entity Framework. It covers their role in Domain-Driven Design, the challenges of mapping them to relational databases, and how techniques like ValueConverter can help bridge the gap between the domain model and the persistence layer.">
+
+	<title>Implementing DDD Series: Persisting Value Objects using Entity Framework &middot; Comments on Software Development</title>
+
+	
+	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/fonts.css">
+	<link rel="stylesheet" href="/css/custom.css">
+	<link rel="stylesheet" href="/css/dracula.css">
+	
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+	
+	<link href="" rel="alternate"
+		type="application/rss+xml" title="Comments on Software Development" />
+</head>
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					<h2 class="nav-title">Comments on Software Development</h2>
+				</a>
+				<ul>
+    
+    
+        <li>
+            <a href="/blog/">
+                
+                <span>Blog</span>
+                
+            </a>
+        </li>
+    
+</ul>
+			</div>
+		</nav>
+
+        
+
+<main>
+	<div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Jens Andresen
+        <br>
+        <span>on&nbsp;</span><time datetime="2025-01-20 00:00:00 &#43;0000 UTC">January 20, 2025</time>
+</div>
+		<h1 class="post-title">Implementing DDD Series: Persisting Value Objects using Entity Framework</h1>
+<div class="post-line"></div>
+
+		
+
+		<p><img src="/img/persisting-values-1.jpg" alt="Building Blocks"></p>
+<p>Following up on my previous article on <a href="https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/">Modelling Business Primitives With <code>Value Objects</code></a>, where I showed how I like to encapsulate the inner value and protect it at all cause, and not directly expose it to external parties (external to the <code>Value Object</code> class). This of course poses a challenge when needing to persist the value, as I&rsquo;ve effectively introduced a whole new type that is unknown to any libraries and frameworks, and its inner value is guarded.</p>
+<p>Let&rsquo;s take a look at how I often persist <code>Value Objects</code> in a typical business application, where <code>Entity Framework</code> is used on top of a relational database, business concepts are mapped to tables and columns inside those tables. In the case of <code>Value Objects</code>, they are mapped to one or more columns depending on the amount of information they carry. These columns have a data type, and we now step into the art of mapping types from the application layer to the types that are available from the persistence layer. To be fair, <code>Entity Framework</code> provides abstractions for the specific data types available in the database technology that we&rsquo;ve chosen, but these abstractions can only be mapped back and forth between language primitives (e.g. your <code>string</code>, <code>int</code>, <code>bool</code>, <code>datetime</code> etc.) and not your newly defined business primitives in the form of <code>Value Objects</code>. And to make it worse, one of the ideas of the <code>Value Object</code> implementation is to <strong>hide</strong> the language primitive, so <code>Entity Framework</code> will have a hard time figuring out what to do, so we need to provide a bit of help.</p>
+<h2 id="valueconverter-to-the-rescue">ValueConverter to the rescue</h2>
+<p>A feature of <code>Entity Framework</code> is that you can specify a <code>ValueConverter</code> for types where you explicitly define how a language (or runtime) type should be converted to a database type. Common use cases are to force all <code>datetime</code> to be stored as UTC or to store <code>enum</code>s as their string representation to make stored values more relatable when looking directly in the database (seeing a <code>1</code> or <code>3</code> might not be as relatable as seeing <code>Pending</code> or <code>Failed</code> in a status column).</p>
+<p>Let&rsquo;s use a <code>ValueConverter</code> to tell how <code>Entity Framework</code> should convert a <code>Value Object</code> into a database type. I like to be very explicit in my <code>DbContext</code> implementations around how I tell the story of how an entity gets mapped from an object representation to a relational format, and I tend to favor explicit declarations for each property in my <code>OnModelCreating</code> override. As per my experience, it makes it easier and a lot faster to build up an understanding of how business concepts are represented in a relational format, but <code>Entity Framework</code> comes with a lot of conventions built-in and I could leave a lot of the statements out because they would get picked up by those conventions. So this is not only serving the purpose of instructing <code>Entity Framework</code> on how to persist information in a relational format, but also by being very explicit in telling the story to other developers looking at the code (and often just a future version of myself).</p>
+<p>One way of explicitly instructing <code>Entity Framework</code> on how to convert a <code>Value Object</code> based property is to use the inline <code>HasConversion</code> option when mapping properties of an entity in the <code>OnModelCreating</code> override in your <code>DbContext</code> implementation, but if you have multiple properties of the same <code>Value Object</code> type you are better served by overriding the <code>ConfigureConventions</code> method. Then you can define a converter for all references to a type of that <code>Value Object</code>. Now these converters can be defined using inline lambda expressions to quickly get it going, but I tend to opt for a class-based approach (personal taste). In my article <a href="https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/">Modelling Business Primitives With <code>Value Objects</code></a> I have implemented a <code>ProductNumber</code> as a <code>Value Object</code>, and let&rsquo;s instruct <code>Entity Framework</code> on how to deal with it.</p>
+<h3 id="simple-productnumberconverter-implementation">Simple ProductNumberConverter implementation</h3>
+<p>First off, I write a simple converter implementation for my <code>Value Object</code> and in this case I would write the following for converting the <code>ProductNumber</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ProductNumberConverter</span> : ValueConverter&lt;ProductNumber, <span style="color:#66d9ef">string</span>&gt;
+{
+    <span style="color:#66d9ef">public</span> ProductNumberConverter() : <span style="color:#66d9ef">base</span>(
+        modelValue =&gt; modelValue.ToString(),
+        dbValue =&gt; ProductNumber.Parse(dbValue))
+    {
+
+    }
+}
+</code></pre></div><p>You can see that the <code>ValueConverter&lt;&gt;</code> is generic and it closes a type reference to the model type and the database type. In the case of the above my model type is my <code>Value Object</code> of <code>ProductNumber</code> and the database type is the type abstraction that <code>Entity Framework</code> understands, which in this case is a simple language primitive of <code>string</code>. The constructor of the <code>ValueConverter</code> class takes a lambda for converting from the model representation in the form of:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp">modelValue =&gt; modelValue.ToString()
+</code></pre></div><p>&hellip;and it also takes a lambda for converting from the database type (e.g. a <code>string</code> in this example) to a model representation in the form of:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp">dbValue =&gt; ProductNumber.Parse(dbValue)
+</code></pre></div><p>I rely on the parsing logic that I&rsquo;ve implemented in the <code>ProductNumber</code> class, hence I&rsquo;m pushing the responsibility onto that class where I want to centralize the logic and opinions around product numbers.</p>
+<h3 id="using-the-converter">Using the converter</h3>
+<p>Now I can specify that for all references to a type of <code>ProductNumber</code>, I want my converter to be used. I do that my adding to my override of <code>ConfigureConventions</code> method on my <code>DbContext</code> like this:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-csharp" data-lang="csharp"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">PaymentApiDbContext</span> : DbContext
+{
+    <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>
+    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">override</span> <span style="color:#66d9ef">void</span> ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span>
+        configurationBuilder
+            .Properties&lt;ProductNumber&gt;()
+            .HaveConversion&lt;ProductNumberConverter&gt;();
+    }
+}
+</code></pre></div><p>When reading the example above, it almost explains to me in <em>plain English</em> how product numbers are handled (or maybe I&rsquo;ve just looked at this for too long 😊).</p>
+<h2 id="final-thoughts">Final thoughts</h2>
+<p>Being explicit when declaring how your information will be persisted has been a preferred practice of mine for a long time. When relying on conventions, sometimes you get too little or way too much, but being explicit about it hopefully gives you what you need. But the more important aspect of it, to me at least, is the communication of intent. You simply declare your intent; for future readers. Now conventions absolutely has its merits, and I use conventions in many places, but my experience has taught me that this is a very good place to invest a bit of extra time on being explicit. The examples above would also reveal the relative low effort and low complexity of doing so.</p>
+<p><em>Thank you for reading this post.</em></p>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			<span>
+			&copy; <time datetime="2025-01-20 13:38:02.120899 &#43;0000 UTC m=&#43;1.386181001">2025</time> Jens Andresen. Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

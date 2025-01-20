@@ -4,56 +4,66 @@
   
   <url>
     <loc>https://www.jensandresen.com/tags/.net/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/blog/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/tags/c#/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/categories/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/tags/ddd/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/categories/design/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/categories/development/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/tags/domain-driven-design/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</loc>
-    <lastmod>2025-01-09T00:00:00+00:00</lastmod>
+    <loc>https://www.jensandresen.com/tags/entity-framework/</loc>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.jensandresen.com/blog/implementing-ddd-series-persisting-value-objects-using-entity-framework/</loc>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://www.jensandresen.com/tags/</loc>
+    <lastmod>2025-01-20T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</loc>
     <lastmod>2025-01-09T00:00:00+00:00</lastmod>
   </url>
   

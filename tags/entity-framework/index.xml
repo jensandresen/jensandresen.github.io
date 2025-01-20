@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>DDD on Comments on Software Development</title>
-    <link>https://www.jensandresen.com/tags/ddd/</link>
-    <description>Recent content in DDD on Comments on Software Development</description>
+    <title>Entity Framework on Comments on Software Development</title>
+    <link>https://www.jensandresen.com/tags/entity-framework/</link>
+    <description>Recent content in Entity Framework on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 20 Jan 2025 00:00:00 +0000</lastBuildDate>
     
-	<atom:link href="https://www.jensandresen.com/tags/ddd/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://www.jensandresen.com/tags/entity-framework/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
@@ -18,15 +18,6 @@
       
       <guid>https://www.jensandresen.com/blog/implementing-ddd-series-persisting-value-objects-using-entity-framework/</guid>
       <description>A look at persisting Value Objects in Domain-Driven Design with Entity Framework, focusing on practical implementation in C#. See how I like to map Value Objects to relational databases while maintaining business invariants and promoting clarity for developers.</description>
-    </item>
-    
-    <item>
-      <title>Implementing DDD Series: Modelling Business Primitives with Value Objects</title>
-      <link>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</link>
-      <pubDate>Thu, 09 Jan 2025 00:00:00 +0000</pubDate>
-      
-      <guid>https://www.jensandresen.com/blog/implementing-ddd-series-modelling-business-primitives-with-value-objects/</guid>
-      <description>A look at Value Objects in Domain-Driven Design, including their implementation in C#, their purpose in extending the type system, and how they help protect business invariants while fostering a shared language between developers and domain experts.</description>
     </item>
     
   </channel>

@@ -1,4 +1,1 @@
 User-agent: *
-Disallow: /.blog/
-Disallow: /makefile
-Sitemap: https://www.jensandresen.com/sitemap.xml

@@ -6,10 +6,19 @@
     <description>Recent content in Domain-Driven Design on Comments on Software Development</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 09 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 20 Jan 2025 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://www.jensandresen.com/tags/domain-driven-design/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Implementing DDD Series: Persisting Value Objects using Entity Framework</title>
+      <link>https://www.jensandresen.com/blog/implementing-ddd-series-persisting-value-objects-using-entity-framework/</link>
+      <pubDate>Mon, 20 Jan 2025 00:00:00 +0000</pubDate>
+      
+      <guid>https://www.jensandresen.com/blog/implementing-ddd-series-persisting-value-objects-using-entity-framework/</guid>
+      <description>A look at persisting Value Objects in Domain-Driven Design with Entity Framework, focusing on practical implementation in C#. See how I like to map Value Objects to relational databases while maintaining business invariants and promoting clarity for developers.</description>
+    </item>
     
     <item>
       <title>Implementing DDD Series: Modelling Business Primitives with Value Objects</title>
