@@ -19,3 +19,5 @@ menu:
     #   url: /contact/
 paginate: 50
 googleAnalytics: UA-62446547-1
+enableEmoji: true
+enableRobotsTXT: true
